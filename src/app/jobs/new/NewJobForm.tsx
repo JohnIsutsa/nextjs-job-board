@@ -1,5 +1,6 @@
 'use client'
 
+import LoadingButton from "@/components/LoadingButton"
 import LocationInput from "@/components/LocationInput"
 import RichTextEditor from "@/components/RichTextEditor"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -124,12 +125,20 @@ export default function NewJobForm() {
                         />
                         <FormField
                             control={control}
-                            name="location"
+                            name="locationType"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Location</FormLabel>
                                     <FormControl>
-                                        <Select {...field} defaultValue="">
+                                        <Select
+                                            {...field}
+                                            defaultValue=""
+                                            onChange={e => {
+                                                field.onChange(e)
+                                                if (e.currentTarget.value === "remote") {
+                                                    trigger("location")
+                                                }
+                                            }}>
                                             <option value="" hidden>
                                                 Select an option
                                             </option>
@@ -230,7 +239,7 @@ export default function NewJobForm() {
                                     </Label>
                                     <FormControl>
                                         <RichTextEditor
-                                            onChange={(draft) => draftToMarkdown(draft)}
+                                            onChange={(draft) => field.onChange(draftToMarkdown(draft))}
                                             ref={field.ref}
                                         />
                                     </FormControl>
@@ -251,6 +260,9 @@ export default function NewJobForm() {
                                 </FormItem>
                             )}
                         />
+                        <LoadingButton loading={isSubmitting}>
+                            Submit
+                        </LoadingButton>
                     </form>
                 </Form>
             </div>
